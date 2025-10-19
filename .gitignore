@@ -1,0 +1,6 @@
+/.kiro
+/CLEANUP-SUMMARY.md
+node_modules/
+.env
+*.log
+downloads/

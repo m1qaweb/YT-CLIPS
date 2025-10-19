@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Clip Downloader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF0000;
+            --primary-dark: #CC0000;
+            --secondary: #282828;
+            --background: #0F0F0F;
+            --surface: #1A1A1A;
+            --surface-light: #272727;
+            --text-primary: #FFFFFF;
+            --text-secondary: #AAAAAA;
+            --border: #3F3F3F;
+            --success: #00C853;
+            --error: #FF3838;
+            --warning: #FFA000;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(26, 26, 26, 0.95);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--surface-light);
+            border-radius: 100px;
+            font-size: 0.875rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* Download Section */
+        .download-section {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: var(--surface-light);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--background);
+        }
+
+        .url-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: var(--surface-light);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Progress Card */
+        .download-progress {
+            background: var(--surface-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .download-progress.active {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-bar-container {
+            background: var(--background);
+            height: 8px;
+            border-radius: 100px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 100px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Downloads List */
+        .downloads-section {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .downloads-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .downloads-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .download-item {
+            background: var(--surface-light);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .download-item:hover {
+            border-color: var(--border);
+            transform: translateX(4px);
+        }
+
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .file-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--background);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .file-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .download-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: none;
+            background: var(--background);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            color: var(--text-primary);
+            background: var(--surface);
+        }
+
+        .action-btn.download:hover {
+            color: var(--success);
+        }
+
+        .action-btn.delete:hover {
+            color: var(--error);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .toast {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 300px;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toast.success {
+            border-color: var(--success);
+        }
+
+        .toast.error {
+            border-color: var(--error);
+        }
+
+        .toast.warning {
+            border-color: var(--warning);
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--error);
+        }
+
+        .toast.warning .toast-icon {
+            color: var(--warning);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .download-section,
+            .downloads-section {
+                padding: 1.5rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .downloads-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .download-item {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .download-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fab fa-youtube"></i>
+                <span>Clip Downloader</span>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="status-text">Connected</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Download Section -->
+        <div class="download-section">
+            <h2 class="section-title">
+                <i class="fas fa-download"></i>
+                Download YouTube Content
+            </h2>
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    class="url-input"
+                    id="urlInput"
+                    placeholder="Paste YouTube URL here (video, clip, or short)"
+                    autocomplete="off"
+                >
+                <button class="btn btn-primary" id="downloadBtn">
+                    <i class="fas fa-download"></i>
+                    Download
+                </button>
+            </div>
+
+            <div id="progressContainer"></div>
+        </div>
+
+        <!-- Downloads List -->
+        <div class="downloads-section">
+            <div class="downloads-header">
+                <h2 class="section-title">
+                    <i class="fas fa-folder"></i>
+                    Downloaded Files
+                </h2>
+                <button class="btn btn-secondary" id="refreshBtn">
+                    <i class="fas fa-sync"></i>
+                    Refresh
+                </button>
+            </div>
+
+            <div id="downloadsList" class="downloads-list">
+                <div class="empty-state">
+                    <i class="fas fa-cloud-download-alt empty-icon"></i>
+                    <p>No downloads yet. Paste a URL above to get started!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        // Socket connection
+        const socket = io();
+        const socketId = socket.id;
+
+        // DOM Elements
+        const urlInput = document.getElementById('urlInput');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const downloadsList = document.getElementById('downloadsList');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const statusText = document.getElementById('status-text');
+        const statusDot = document.querySelector('.status-dot');
+        const toastContainer = document.getElementById('toastContainer');
+
+        // Active downloads tracking
+        const activeDownloads = new Map();
+
+        // Socket event listeners
+        socket.on('connect', () => {
+            statusText.textContent = 'Connected';
+            statusDot.style.background = 'var(--success)';
+            console.log('Connected to server');
+        });
+
+        socket.on('disconnect', () => {
+            statusText.textContent = 'Disconnected';
+            statusDot.style.background = 'var(--error)';
+            showToast('Connection lost. Trying to reconnect...', 'error');
+        });
+
+        socket.on('download:init', (data) => {
+            console.log('Download initialized:', data);
+            createProgressCard(data.downloadId, data.url, data.type);
+        });
+
+        socket.on('download:progress', (data) => {
+            updateProgress(data);
+        });
+
+        socket.on('download:info', (data) => {
+            updateDownloadInfo(data);
+        });
+
+        socket.on('download:status', (data) => {
+            updateDownloadStatus(data);
+        });
+
+        socket.on('download:complete', (data) => {
+            console.log('Download complete:', data);
+            completeDownload(data);
+            loadDownloads();
+        });
+
+        socket.on('download:error', (data) => {
+            console.error('Download error:', data);
+            showToast(data.message || 'Download failed', 'error');
+            removeProgressCard(data.downloadId);
+        });
+
+        socket.on('download:warning', (data) => {
+            console.warn('Download warning:', data);
+        });
+
+        // Event listeners
+        downloadBtn.addEventListener('click', startDownload);
+        refreshBtn.addEventListener('click', loadDownloads);
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') startDownload();
+        });
+
+        // Functions
+        async function startDownload() {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showToast('Please enter a YouTube URL', 'warning');
+                return;
+            }
+
+            // Validate URL
+            const response = await fetch('/api/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            });
+
+            const validation = await response.json();
+
+            if (!validation.valid) {
+                showToast('Please enter a valid YouTube URL', 'error');
+                return;
+            }
+
+            // Clear input
+            urlInput.value = '';
+
+            // Start download
+            socket.emit('download:start', {
+                url,
+                socketId: socket.id
+            });
+
+            showToast(`Starting download (${validation.type})...`, 'success');
+        }
+
+        function createProgressCard(downloadId, url, type) {
+            const card = document.createElement('div');
+            card.className = 'download-progress active';
+            card.id = `progress-${downloadId}`;
+            card.innerHTML = `
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <i class="fas fa-${type === 'clip' ? 'cut' : type === 'short' ? 'mobile-alt' : 'video'}"></i>
+                        <span>Downloading ${type}...</span>
+                    </div>
+                    <button class="action-btn" onclick="cancelDownload('${downloadId}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div class="progress-stats">
+                    <div class="progress-stat">
+                        <i class="fas fa-percentage"></i>
+                        <span class="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-stat">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="progress-speed">--</span>
+                    </div>
+                    <div class="progress-stat">
+                        <i class="fas fa-clock"></i>
+                        <span class="progress-eta">--</span>
+                    </div>
+                    <div class="progress-stat">
+                        <i class="fas fa-file"></i>
+                        <span class="progress-size">--</span>
+                    </div>
+                </div>
+            `;
+
+            progressContainer.appendChild(card);
+            activeDownloads.set(downloadId, { url, type });
+        }
+
+        function updateProgress(data) {
+            const card = document.getElementById(`progress-${data.downloadId}`);
+            if (!card) return;
+
+            const progressBar = card.querySelector('.progress-bar');
+            const percentSpan = card.querySelector('.progress-percent');
+            const speedSpan = card.querySelector('.progress-speed');
+            const etaSpan = card.querySelector('.progress-eta');
+            const sizeSpan = card.querySelector('.progress-size');
+
+            progressBar.style.width = `${data.percent}%`;
+            percentSpan.textContent = `${Math.round(data.percent)}%`;
+            speedSpan.textContent = data.speed;
+            etaSpan.textContent = data.eta;
+            sizeSpan.textContent = data.size;
+        }
+
+        function updateDownloadInfo(data) {
+            const card = document.getElementById(`progress-${data.downloadId}`);
+            if (!card) return;
+
+            const title = card.querySelector('.progress-title span');
+            title.textContent = data.filename || 'Downloading...';
+        }
+
+        function updateDownloadStatus(data) {
+            const card = document.getElementById(`progress-${data.downloadId}`);
+            if (!card) return;
+
+            const title = card.querySelector('.progress-title span');
+            title.textContent = data.status;
+        }
+
+        function completeDownload(data) {
+            removeProgressCard(data.downloadId);
+            showToast(`Download complete: ${data.filename}`, 'success');
+        }
+
+        function removeProgressCard(downloadId) {
+            const card = document.getElementById(`progress-${downloadId}`);
+            if (card) {
+                card.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => card.remove(), 300);
+            }
+            activeDownloads.delete(downloadId);
+        }
+
+        function cancelDownload(downloadId) {
+            socket.emit('download:cancel', downloadId);
+            removeProgressCard(downloadId);
+            showToast('Download cancelled', 'warning');
+        }
+
+        async function loadDownloads() {
+            try {
+                const response = await fetch('/api/downloads');
+                const files = await response.json();
+
+                if (files.length === 0) {
+                    downloadsList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-cloud-download-alt empty-icon"></i>
+                            <p>No downloads yet. Paste a URL above to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                downloadsList.innerHTML = files.map(file => `
+                    <div class="download-item">
+                        <div class="download-info">
+                            <div class="file-icon">
+                                <i class="fas fa-file-video"></i>
+                            </div>
+                            <div class="file-details">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-meta">${file.size} • ${new Date(file.date).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <div class="download-actions">
+                            <button class="action-btn download" onclick="downloadFile('${file.url}')" title="Download">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteFile('${file.name}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showToast('Failed to load downloads', 'error');
+            }
+        }
+
+        function downloadFile(url) {
+            window.open(url, '_blank');
+        }
+
+        async function deleteFile(filename) {
+            if (!confirm(`Delete ${filename}?`)) return;
+
+            try {
+                const response = await fetch(`/api/download/${encodeURIComponent(filename)}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showToast('File deleted', 'success');
+                    loadDownloads();
+                } else {
+                    showToast('Failed to delete file', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to delete file', 'error');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+
+            toast.innerHTML = `
+                <i class="${icons[type]} toast-icon"></i>
+                <div class="toast-content">
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Initialize
+        loadDownloads();
+
+        // Auto-refresh downloads every 30 seconds
+        setInterval(loadDownloads, 30000);
+    </script>
+</body>
+</html>
