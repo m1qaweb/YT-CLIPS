@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Clip Downloader</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,44 +14,155 @@
         }
 
         :root {
-            --primary: #FF0000;
-            --primary-dark: #CC0000;
-            --secondary: #282828;
-            --background: #0F0F0F;
-            --surface: #1A1A1A;
-            --surface-light: #272727;
-            --text-primary: #FFFFFF;
-            --text-secondary: #AAAAAA;
-            --border: #3F3F3F;
-            --success: #00C853;
-            --error: #FF3838;
-            --warning: #FFA000;
-            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-50: #FEE2E2;
+            --primary-100: #FECACA;
+            --primary-200: #FCA5A5;
+            --primary-300: #F87171;
+            --primary-400: #EF4444;
+            --primary-500: #DC2626;
+            --primary-600: #B91C1C;
+            --primary-700: #991B1B;
+            --primary-800: #7F1D1D;
+            --primary-900: #450A0A;
+
+            --neutral-50: #FAFAFA;
+            --neutral-100: #F5F5F5;
+            --neutral-200: #E5E5E5;
+            --neutral-300: #D4D4D4;
+            --neutral-400: #A3A3A3;
+            --neutral-500: #737373;
+            --neutral-600: #525252;
+            --neutral-700: #404040;
+            --neutral-800: #262626;
+            --neutral-900: #171717;
+            --neutral-950: #0A0A0A;
+
+            --accent-blue: #3B82F6;
+            --accent-cyan: #06B6D4;
+            --accent-green: #10B981;
+            --accent-yellow: #F59E0B;
+            --accent-purple: #8B5CF6;
+
+            --bg-primary: #0A0A0A;
+            --bg-secondary: #141414;
+            --bg-elevated: #1A1A1A;
+            --bg-overlay: rgba(20, 20, 20, 0.85);
+
+            --surface-glass: rgba(26, 26, 26, 0.7);
+            --surface-glass-hover: rgba(30, 30, 30, 0.8);
+
+            --text-primary: #FAFAFA;
+            --text-secondary: #A3A3A3;
+            --text-tertiary: #737373;
+
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-default: rgba(255, 255, 255, 0.1);
+            --border-strong: rgba(255, 255, 255, 0.2);
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px rgba(220, 38, 38, 0.3);
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+
+            --spacing-1: 4px;
+            --spacing-2: 8px;
+            --spacing-3: 12px;
+            --spacing-4: 16px;
+            --spacing-5: 20px;
+            --spacing-6: 24px;
+            --spacing-8: 32px;
+            --spacing-10: 40px;
+            --spacing-12: 48px;
+            --spacing-16: 64px;
+
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--background);
+            background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
         }
 
-        /* Header */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--neutral-700);
+            border-radius: var(--radius-full);
+            border: 3px solid var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neutral-600);
+        }
+
         .header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 1.5rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(26, 26, 26, 0.95);
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: var(--spacing-4) var(--spacing-6);
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -61,149 +172,101 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: var(--spacing-3);
             font-size: 1.5rem;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-primary);
+            letter-spacing: -0.02em;
         }
 
-        .logo i {
-            color: var(--primary);
-            font-size: 2rem;
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-glow);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+            }
         }
 
         .status-indicator {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--surface-light);
-            border-radius: 100px;
+            gap: var(--spacing-2);
+            padding: var(--spacing-2) var(--spacing-4);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-full);
             font-size: 0.875rem;
+            font-weight: 500;
+            transition: all var(--transition-base);
+        }
+
+        .status-indicator:hover {
+            background: var(--bg-overlay);
+            border-color: var(--border-strong);
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--success);
-            animation: pulse 2s infinite;
+            background: var(--accent-green);
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-ring 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
 
-        /* Main Container */
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
             margin: 0 auto;
-            padding: 2rem;
+            padding: var(--spacing-8) var(--spacing-6);
             flex: 1;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Download Section */
-        .download-section {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border);
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-secondary) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-10);
+            margin-bottom: var(--spacing-8);
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            animation: fadeInUp 0.6s ease 0.2s both;
         }
 
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .url-input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            background: var(--surface-light);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .url-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: var(--background);
-        }
-
-        .url-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.3);
-        }
-
-        .btn-primary:disabled {
-            background: var(--surface-light);
-            color: var(--text-secondary);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: var(--surface-light);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--border);
-        }
-
-        /* Progress Card */
-        .download-progress {
-            background: var(--surface-light);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -211,37 +274,282 @@
             }
         }
 
-        .download-progress.active {
-            display: block;
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-3);
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-8);
+            font-weight: 400;
+        }
+
+        .feature-badges {
+            display: flex;
+            gap: var(--spacing-3);
+            margin-bottom: var(--spacing-6);
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            padding: var(--spacing-2) var(--spacing-4);
+            background: var(--surface-glass);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-base);
+        }
+
+        .badge:hover {
+            background: var(--surface-glass-hover);
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+        }
+
+        .badge i {
+            font-size: 1rem;
+        }
+
+        .badge.video { border-color: var(--accent-blue); }
+        .badge.clip { border-color: var(--primary-500); }
+        .badge.short { border-color: var(--accent-purple); }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: var(--spacing-6);
+        }
+
+        .input-group {
+            display: flex;
+            gap: var(--spacing-3);
+            position: relative;
+        }
+
+        .url-input-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: var(--spacing-4) var(--spacing-6);
+            background: var(--surface-glass);
+            border: 2px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all var(--transition-base);
+            backdrop-filter: blur(10px);
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            background: var(--bg-elevated);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1), var(--shadow-lg);
+            transform: translateY(-1px);
+        }
+
+        .url-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: var(--spacing-4);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            pointer-events: none;
+        }
+
+        .btn {
+            padding: var(--spacing-4) var(--spacing-8);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-2);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow), var(--shadow-lg);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            background: var(--neutral-800);
+            color: var(--text-tertiary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--surface-glass);
+            color: var(--text-primary);
+            border: 1px solid var(--border-default);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-glass-hover);
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn i {
+            font-size: 1.125rem;
+        }
+
+        #progressContainer {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-4);
+        }
+
+        .download-progress {
+            background: var(--surface-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-6);
+            animation: slideInUp 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .progress-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-4);
+        }
+
+        .progress-title-wrapper {
+            flex: 1;
         }
 
         .progress-title {
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1.125rem;
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--spacing-2);
+            margin-bottom: var(--spacing-1);
+        }
+
+        .progress-url {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .progress-bar-container {
-            background: var(--background);
+            background: var(--bg-primary);
             height: 8px;
-            border-radius: 100px;
+            border-radius: var(--radius-full);
             overflow: hidden;
-            margin-bottom: 1rem;
+            margin-bottom: var(--spacing-4);
+            position: relative;
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-            border-radius: 100px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+            border-radius: var(--radius-full);
             transition: width 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -254,7 +562,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
             animation: shimmer 1.5s infinite;
         }
 
@@ -264,159 +572,257 @@
         }
 
         .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-4);
         }
 
         .progress-stat {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            flex-direction: column;
+            gap: var(--spacing-1);
         }
 
-        /* Downloads List */
+        .progress-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .progress-stat-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-default);
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .action-btn:hover {
+            color: var(--text-primary);
+            background: var(--surface-glass);
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-btn.close:hover {
+            color: var(--primary-500);
+            border-color: var(--primary-500);
+        }
+
         .downloads-section {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 2rem;
-            border: 1px solid var(--border);
+            background: var(--bg-elevated);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-8);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 0.6s ease 0.4s both;
         }
 
         .downloads-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing-6);
+            padding-bottom: var(--spacing-4);
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        .downloads-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .download-item {
-            background: var(--surface-light);
-            border-radius: 12px;
-            padding: 1.25rem;
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            transition: all 0.3s;
-            border: 1px solid transparent;
+            gap: var(--spacing-3);
+            letter-spacing: -0.02em;
         }
 
-        .download-item:hover {
-            border-color: var(--border);
-            transform: translateX(4px);
+        .section-title i {
+            color: var(--primary-500);
+            font-size: 1.75rem;
         }
 
-        .download-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex: 1;
+        .downloads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-4);
         }
 
-        .file-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--background);
-            border-radius: 10px;
+        .download-card {
+            background: var(--surface-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-5);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-500), var(--accent-blue));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition-base);
+        }
+
+        .download-card:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .download-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .file-icon-wrapper {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary);
-            font-size: 1.25rem;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-4);
+            box-shadow: var(--shadow-md);
         }
 
         .file-details {
-            flex: 1;
+            margin-bottom: var(--spacing-4);
         }
 
         .file-name {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 0.25rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
+            margin-bottom: var(--spacing-2);
             overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.4;
         }
 
         .file-meta {
+            display: flex;
+            gap: var(--spacing-3);
             font-size: 0.875rem;
-            color: var(--text-secondary);
+            color: var(--text-tertiary);
+        }
+
+        .file-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-1);
         }
 
         .download-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: var(--spacing-2);
         }
 
-        .action-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+        .action-btn.download {
+            flex: 1;
+            width: auto;
+            background: var(--primary-500);
+            color: white;
             border: none;
-            background: var(--background);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .action-btn:hover {
-            color: var(--text-primary);
-            background: var(--surface);
         }
 
         .action-btn.download:hover {
-            color: var(--success);
+            background: var(--primary-600);
+            color: white;
         }
 
         .action-btn.delete:hover {
-            color: var(--error);
+            color: var(--primary-500);
+            border-color: var(--primary-500);
         }
 
-        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
+            padding: var(--spacing-16) var(--spacing-6);
         }
 
         .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 4rem;
+            color: var(--text-tertiary);
             opacity: 0.5;
+            margin-bottom: var(--spacing-4);
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
         }
 
-        /* Toast Notifications */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-2);
+        }
+
+        .empty-description {
+            font-size: 1rem;
+            color: var(--text-tertiary);
+        }
+
         .toast-container {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
+            bottom: var(--spacing-6);
+            right: var(--spacing-6);
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: var(--spacing-3);
+            max-width: 400px;
         }
 
         .toast {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-4) var(--spacing-5);
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            min-width: 300px;
-            animation: slideInRight 0.3s ease;
+            align-items: flex-start;
+            gap: var(--spacing-3);
+            box-shadow: var(--shadow-xl);
+            animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
         }
 
         @keyframes slideInRight {
@@ -430,54 +836,91 @@
             }
         }
 
+        .toast::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
         .toast.success {
-            border-color: var(--success);
+            border-color: var(--accent-green);
+        }
+
+        .toast.success::before {
+            background: var(--accent-green);
         }
 
         .toast.error {
-            border-color: var(--error);
+            border-color: var(--primary-500);
+        }
+
+        .toast.error::before {
+            background: var(--primary-500);
         }
 
         .toast.warning {
-            border-color: var(--warning);
+            border-color: var(--accent-yellow);
+        }
+
+        .toast.warning::before {
+            background: var(--accent-yellow);
         }
 
         .toast-icon {
             font-size: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
         .toast.success .toast-icon {
-            color: var(--success);
+            color: var(--accent-green);
         }
 
         .toast.error .toast-icon {
-            color: var(--error);
+            color: var(--primary-500);
         }
 
         .toast.warning .toast-icon {
-            color: var(--warning);
+            color: var(--accent-yellow);
         }
 
         .toast-content {
             flex: 1;
         }
 
-        .toast-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
         .toast-message {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            line-height: 1.4;
         }
 
-        /* Loading Spinner */
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--border-strong);
+            animation: toastProgress 5s linear;
+        }
+
+        @keyframes toastProgress {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
         .spinner {
             width: 20px;
             height: 20px;
-            border: 2px solid var(--border);
-            border-top-color: var(--primary);
+            border: 2px solid var(--border-default);
+            border-top-color: var(--primary-500);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
@@ -486,15 +929,59 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .container {
-                padding: 1rem;
+                padding: var(--spacing-6) var(--spacing-4);
             }
 
-            .download-section,
+            .hero-section {
+                padding: var(--spacing-8) var(--spacing-6);
+            }
+
             .downloads-section {
-                padding: 1.5rem;
+                padding: var(--spacing-6);
+            }
+
+            .downloads-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: var(--spacing-3) var(--spacing-4);
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.25rem;
+            }
+
+            .status-indicator {
+                font-size: 0.8125rem;
+                padding: var(--spacing-2) var(--spacing-3);
+            }
+
+            .container {
+                padding: var(--spacing-4);
+            }
+
+            .hero-section {
+                padding: var(--spacing-6) var(--spacing-4);
+                margin-bottom: var(--spacing-6);
+            }
+
+            .hero-title {
+                font-size: 1.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
             }
 
             .input-group {
@@ -503,33 +990,76 @@
 
             .btn {
                 width: 100%;
-                justify-content: center;
+            }
+
+            .downloads-section {
+                padding: var(--spacing-4);
             }
 
             .downloads-header {
                 flex-direction: column;
-                gap: 1rem;
+                gap: var(--spacing-3);
                 align-items: stretch;
             }
 
-            .download-item {
-                flex-direction: column;
-                gap: 1rem;
+            .downloads-grid {
+                grid-template-columns: 1fr;
             }
 
-            .download-actions {
-                width: 100%;
-                justify-content: flex-end;
+            .progress-stats {
+                grid-template-columns: repeat(2, 1fr);
             }
+
+            .toast-container {
+                bottom: var(--spacing-4);
+                right: var(--spacing-4);
+                left: var(--spacing-4);
+                max-width: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-elevated) 0%, var(--bg-secondary) 50%, var(--bg-elevated) 100%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <div class="logo">
-                <i class="fab fa-youtube"></i>
+                <div class="logo-icon">
+                    <i class="fab fa-youtube"></i>
+                </div>
                 <span>Clip Downloader</span>
             </div>
             <div class="status-indicator">
@@ -539,66 +1069,80 @@
         </div>
     </header>
 
-    <!-- Main Container -->
     <div class="container">
-        <!-- Download Section -->
-        <div class="download-section">
-            <h2 class="section-title">
-                <i class="fas fa-download"></i>
-                Download YouTube Content
-            </h2>
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Download YouTube Content</h1>
+                <p class="hero-subtitle">Fast, reliable downloads for videos, clips, and shorts</p>
 
-            <div class="input-group">
-                <input
-                    type="text"
-                    class="url-input"
-                    id="urlInput"
-                    placeholder="Paste YouTube URL here (video, clip, or short)"
-                    autocomplete="off"
-                >
-                <button class="btn btn-primary" id="downloadBtn">
-                    <i class="fas fa-download"></i>
-                    Download
-                </button>
+                <div class="feature-badges">
+                    <span class="badge video">
+                        <i class="fas fa-video"></i>
+                        Full Videos
+                    </span>
+                    <span class="badge clip">
+                        <i class="fas fa-cut"></i>
+                        Clips
+                    </span>
+                    <span class="badge short">
+                        <i class="fas fa-mobile-alt"></i>
+                        Shorts
+                    </span>
+                </div>
+
+                <div class="input-wrapper">
+                    <div class="input-group">
+                        <div class="url-input-container">
+                            <input
+                                type="text"
+                                class="url-input"
+                                id="urlInput"
+                                placeholder="Paste YouTube URL here..."
+                                autocomplete="off"
+                            >
+                            <i class="fas fa-link input-icon"></i>
+                        </div>
+                        <button class="btn btn-primary" id="downloadBtn">
+                            <i class="fas fa-download"></i>
+                            Download
+                        </button>
+                    </div>
+                </div>
+
+                <div id="progressContainer"></div>
             </div>
+        </section>
 
-            <div id="progressContainer"></div>
-        </div>
-
-        <!-- Downloads List -->
-        <div class="downloads-section">
+        <section class="downloads-section">
             <div class="downloads-header">
                 <h2 class="section-title">
-                    <i class="fas fa-folder"></i>
+                    <i class="fas fa-folder-open"></i>
                     Downloaded Files
                 </h2>
                 <button class="btn btn-secondary" id="refreshBtn">
-                    <i class="fas fa-sync"></i>
+                    <i class="fas fa-sync-alt"></i>
                     Refresh
                 </button>
             </div>
 
-            <div id="downloadsList" class="downloads-list">
+            <div id="downloadsList" class="downloads-grid">
                 <div class="empty-state">
                     <i class="fas fa-cloud-download-alt empty-icon"></i>
-                    <p>No downloads yet. Paste a URL above to get started!</p>
+                    <div class="empty-title">No downloads yet</div>
+                    <p class="empty-description">Paste a YouTube URL above to get started</p>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
-    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Socket.IO -->
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
-        // Socket connection
         const socket = io();
         const socketId = socket.id;
 
-        // DOM Elements
         const urlInput = document.getElementById('urlInput');
         const downloadBtn = document.getElementById('downloadBtn');
         const progressContainer = document.getElementById('progressContainer');
@@ -608,19 +1152,17 @@
         const statusDot = document.querySelector('.status-dot');
         const toastContainer = document.getElementById('toastContainer');
 
-        // Active downloads tracking
         const activeDownloads = new Map();
 
-        // Socket event listeners
         socket.on('connect', () => {
             statusText.textContent = 'Connected';
-            statusDot.style.background = 'var(--success)';
+            statusDot.style.background = 'var(--accent-green)';
             console.log('Connected to server');
         });
 
         socket.on('disconnect', () => {
             statusText.textContent = 'Disconnected';
-            statusDot.style.background = 'var(--error)';
+            statusDot.style.background = 'var(--primary-500)';
             showToast('Connection lost. Trying to reconnect...', 'error');
         });
 
@@ -657,59 +1199,74 @@
             console.warn('Download warning:', data);
         });
 
-        // Event listeners
         downloadBtn.addEventListener('click', startDownload);
         refreshBtn.addEventListener('click', loadDownloads);
         urlInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') startDownload();
         });
 
-        // Functions
         async function startDownload() {
             const url = urlInput.value.trim();
 
             if (!url) {
                 showToast('Please enter a YouTube URL', 'warning');
+                urlInput.focus();
                 return;
             }
 
-            // Validate URL
-            const response = await fetch('/api/validate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
-            });
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = '<div class="spinner"></div> Validating...';
 
-            const validation = await response.json();
+            try {
+                const response = await fetch('/api/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
 
-            if (!validation.valid) {
-                showToast('Please enter a valid YouTube URL', 'error');
-                return;
+                const validation = await response.json();
+
+                if (!validation.valid) {
+                    showToast('Please enter a valid YouTube URL', 'error');
+                    return;
+                }
+
+                urlInput.value = '';
+
+                socket.emit('download:start', {
+                    url,
+                    socketId: socket.id
+                });
+
+                showToast(`Starting download (${validation.type})...`, 'success');
+            } catch (error) {
+                showToast('Failed to validate URL', 'error');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
             }
-
-            // Clear input
-            urlInput.value = '';
-
-            // Start download
-            socket.emit('download:start', {
-                url,
-                socketId: socket.id
-            });
-
-            showToast(`Starting download (${validation.type})...`, 'success');
         }
 
         function createProgressCard(downloadId, url, type) {
+            const typeIcons = {
+                clip: 'cut',
+                short: 'mobile-alt',
+                video: 'video'
+            };
+
             const card = document.createElement('div');
-            card.className = 'download-progress active';
+            card.className = 'download-progress';
             card.id = `progress-${downloadId}`;
             card.innerHTML = `
                 <div class="progress-header">
-                    <div class="progress-title">
-                        <i class="fas fa-${type === 'clip' ? 'cut' : type === 'short' ? 'mobile-alt' : 'video'}"></i>
-                        <span>Downloading ${type}...</span>
+                    <div class="progress-title-wrapper">
+                        <div class="progress-title">
+                            <i class="fas fa-${typeIcons[type] || 'video'}"></i>
+                            <span>Downloading ${type}...</span>
+                        </div>
+                        <div class="progress-url">${url}</div>
                     </div>
-                    <button class="action-btn" onclick="cancelDownload('${downloadId}')">
+                    <button class="action-btn close" onclick="cancelDownload('${downloadId}')" aria-label="Cancel">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -718,20 +1275,20 @@
                 </div>
                 <div class="progress-stats">
                     <div class="progress-stat">
-                        <i class="fas fa-percentage"></i>
-                        <span class="progress-percent">0%</span>
+                        <span class="progress-stat-label">Progress</span>
+                        <span class="progress-stat-value progress-percent">0%</span>
                     </div>
                     <div class="progress-stat">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span class="progress-speed">--</span>
+                        <span class="progress-stat-label">Speed</span>
+                        <span class="progress-stat-value progress-speed">--</span>
                     </div>
                     <div class="progress-stat">
-                        <i class="fas fa-clock"></i>
-                        <span class="progress-eta">--</span>
+                        <span class="progress-stat-label">ETA</span>
+                        <span class="progress-stat-value progress-eta">--</span>
                     </div>
                     <div class="progress-stat">
-                        <i class="fas fa-file"></i>
-                        <span class="progress-size">--</span>
+                        <span class="progress-stat-label">Size</span>
+                        <span class="progress-stat-value progress-size">--</span>
                     </div>
                 </div>
             `;
@@ -752,9 +1309,9 @@
 
             progressBar.style.width = `${data.percent}%`;
             percentSpan.textContent = `${Math.round(data.percent)}%`;
-            speedSpan.textContent = data.speed;
-            etaSpan.textContent = data.eta;
-            sizeSpan.textContent = data.size;
+            speedSpan.textContent = data.speed || '--';
+            etaSpan.textContent = data.eta || '--';
+            sizeSpan.textContent = data.size || '--';
         }
 
         function updateDownloadInfo(data) {
@@ -762,7 +1319,9 @@
             if (!card) return;
 
             const title = card.querySelector('.progress-title span');
-            title.textContent = data.filename || 'Downloading...';
+            if (data.filename) {
+                title.textContent = data.filename;
+            }
         }
 
         function updateDownloadStatus(data) {
@@ -781,7 +1340,7 @@
         function removeProgressCard(downloadId) {
             const card = document.getElementById(`progress-${downloadId}`);
             if (card) {
-                card.style.animation = 'slideIn 0.3s ease reverse';
+                card.style.animation = 'slideInUp 0.3s ease reverse';
                 setTimeout(() => card.remove(), 300);
             }
             activeDownloads.delete(downloadId);
@@ -802,28 +1361,37 @@
                     downloadsList.innerHTML = `
                         <div class="empty-state">
                             <i class="fas fa-cloud-download-alt empty-icon"></i>
-                            <p>No downloads yet. Paste a URL above to get started!</p>
+                            <div class="empty-title">No downloads yet</div>
+                            <p class="empty-description">Paste a YouTube URL above to get started</p>
                         </div>
                     `;
                     return;
                 }
 
                 downloadsList.innerHTML = files.map(file => `
-                    <div class="download-item">
-                        <div class="download-info">
-                            <div class="file-icon">
-                                <i class="fas fa-file-video"></i>
-                            </div>
-                            <div class="file-details">
-                                <div class="file-name">${file.name}</div>
-                                <div class="file-meta">${file.size} • ${new Date(file.date).toLocaleString()}</div>
+                    <div class="download-card fade-in">
+                        <div class="file-icon-wrapper">
+                            <i class="fas fa-file-video"></i>
+                        </div>
+                        <div class="file-details">
+                            <div class="file-name" title="${file.name}">${file.name}</div>
+                            <div class="file-meta">
+                                <span class="file-meta-item">
+                                    <i class="fas fa-hdd"></i>
+                                    ${file.size}
+                                </span>
+                                <span class="file-meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    ${new Date(file.date).toLocaleDateString()}
+                                </span>
                             </div>
                         </div>
                         <div class="download-actions">
-                            <button class="action-btn download" onclick="downloadFile('${file.url}')" title="Download">
+                            <button class="action-btn download" onclick="downloadFile('${file.url}')" title="Download file">
                                 <i class="fas fa-download"></i>
+                                Download
                             </button>
-                            <button class="action-btn delete" onclick="deleteFile('${file.name}')" title="Delete">
+                            <button class="action-btn delete" onclick="deleteFile('${encodeURIComponent(file.name)}')" title="Delete file" aria-label="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -839,15 +1407,16 @@
         }
 
         async function deleteFile(filename) {
-            if (!confirm(`Delete ${filename}?`)) return;
+            const decodedName = decodeURIComponent(filename);
+            if (!confirm(`Delete ${decodedName}?`)) return;
 
             try {
-                const response = await fetch(`/api/download/${encodeURIComponent(filename)}`, {
+                const response = await fetch(`/api/download/${filename}`, {
                     method: 'DELETE'
                 });
 
                 if (response.ok) {
-                    showToast('File deleted', 'success');
+                    showToast('File deleted successfully', 'success');
                     loadDownloads();
                 } else {
                     showToast('Failed to delete file', 'error');
@@ -873,20 +1442,20 @@
                 <div class="toast-content">
                     <div class="toast-message">${message}</div>
                 </div>
+                <div class="toast-progress"></div>
             `;
 
             toastContainer.appendChild(toast);
 
             setTimeout(() => {
-                toast.style.animation = 'slideInRight 0.3s ease reverse';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
                 setTimeout(() => toast.remove(), 300);
             }, 5000);
         }
 
-        // Initialize
         loadDownloads();
 
-        // Auto-refresh downloads every 30 seconds
         setInterval(loadDownloads, 30000);
     </script>
 </body>
