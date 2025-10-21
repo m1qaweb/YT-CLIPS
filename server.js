@@ -117,8 +117,130 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(PUBLIC_DIR));
 
-// Active downloads tracking
+// Active downloads tracking with enhanced progress state
 const activeDownloads = new Map();
+
+// Progress smoothing and validation
+class ProgressTracker {
+  constructor(downloadId, socketId) {
+    this.downloadId = downloadId;
+    this.socketId = socketId;
+    this.lastPercent = 0;
+    this.smoothedPercent = 0;
+    this.videoProgress = 0;
+    this.audioProgress = 0;
+    this.currentPhase = 'initializing';
+    this.progressHistory = [];
+    this.lastEmitTime = 0;
+    this.alpha = 0.3; // Exponential moving average factor
+  }
+
+  detectPhase(output, percent) {
+    if (percent < 5) return 'initializing';
+    if (percent < 10) return 'fetching';
+    if (output.includes('[Merger]') || output.includes('Merging')) return 'merging';
+    if (output.includes('post-process') || percent > 95) return 'finalizing';
+    return 'downloading';
+  }
+
+  parseFragmentProgress(output) {
+    // Detect video fragment download
+    const videoMatch = output.match(/\[download\].*?video.*?(\d+\.?\d*)%/i);
+    if (videoMatch) {
+      this.videoProgress = parseFloat(videoMatch[1]);
+    }
+
+    // Detect audio fragment download
+    const audioMatch = output.match(/\[download\].*?audio.*?(\d+\.?\d*)%/i);
+    if (audioMatch) {
+      this.audioProgress = parseFloat(audioMatch[1]);
+    }
+
+    // Calculate weighted progress (video 60%, audio 40%)
+    if (this.videoProgress > 0 || this.audioProgress > 0) {
+      return (this.videoProgress * 0.6) + (this.audioProgress * 0.4);
+    }
+
+    return null;
+  }
+
+  smoothProgress(rawPercent) {
+    // Ensure monotonic increase
+    if (rawPercent < this.lastPercent) {
+      return this.smoothedPercent;
+    }
+
+    // Exponential moving average for smooth transitions
+    this.smoothedPercent = this.alpha * rawPercent + (1 - this.alpha) * this.smoothedPercent;
+
+    // Cap at 100%
+    this.smoothedPercent = Math.min(100, this.smoothedPercent);
+
+    this.lastPercent = rawPercent;
+    this.progressHistory.push({ time: Date.now(), percent: this.smoothedPercent });
+
+    // Keep only last 30 data points
+    if (this.progressHistory.length > 30) {
+      this.progressHistory.shift();
+    }
+
+    return this.smoothedPercent;
+  }
+
+  shouldEmit() {
+    const now = Date.now();
+    // Throttle emissions to max 10 per second (100ms interval)
+    if (now - this.lastEmitTime < 100) {
+      return false;
+    }
+    this.lastEmitTime = now;
+    return true;
+  }
+
+  updateProgress(output) {
+    // Parse standard progress
+    const progressMatch = output.match(/\[download\]\s+(\d+\.?\d*)%/);
+    const speedMatch = output.match(/at\s+([\d.]+\w+\/s)/);
+    const etaMatch = output.match(/ETA\s+([\d:]+)/);
+    const sizeMatch = output.match(/of\s+([\d.]+\w+)/);
+
+    if (!progressMatch) return null;
+
+    let rawPercent = parseFloat(progressMatch[1]);
+
+    // Check for fragment-specific progress
+    const fragmentPercent = this.parseFragmentProgress(output);
+    if (fragmentPercent !== null) {
+      rawPercent = fragmentPercent;
+    }
+
+    // Detect current phase
+    const newPhase = this.detectPhase(output, rawPercent);
+    const phaseChanged = newPhase !== this.currentPhase;
+    this.currentPhase = newPhase;
+
+    // Apply smoothing
+    const smoothedPercent = this.smoothProgress(rawPercent);
+
+    // Throttle emissions
+    if (!this.shouldEmit() && !phaseChanged) {
+      return null;
+    }
+
+    return {
+      downloadId: this.downloadId,
+      percent: smoothedPercent,
+      rawPercent: rawPercent,
+      speed: speedMatch?.[1] || 'N/A',
+      eta: etaMatch?.[1] || 'N/A',
+      size: sizeMatch?.[1] || 'N/A',
+      phase: this.currentPhase,
+      phaseChanged: phaseChanged,
+      videoProgress: this.videoProgress,
+      audioProgress: this.audioProgress
+    };
+  }
+}
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
@@ -315,12 +437,16 @@ async function handleDownload(url, socketId) {
     windowsHide: true
   });
 
+  // Create progress tracker
+  const progressTracker = new ProgressTracker(downloadId, socketId);
+
   // Store active download
   activeDownloads.set(downloadId, {
     process: ytdlp,
     socketId,
     url,
-    startTime: Date.now()
+    startTime: Date.now(),
+    progressTracker
   });
 
   // Send initial status
@@ -334,20 +460,11 @@ async function handleDownload(url, socketId) {
   ytdlp.stdout.on('data', (data) => {
     const output = data.toString();
 
-    // Parse progress
-    const progressMatch = output.match(/\[download\]\s+(\d+\.?\d*)%/);
-    const speedMatch = output.match(/at\s+([\d.]+\w+\/s)/);
-    const etaMatch = output.match(/ETA\s+([\d:]+)/);
-    const sizeMatch = output.match(/of\s+([\d.]+\w+)/);
+    // Use enhanced progress tracker
+    const progressData = progressTracker.updateProgress(output);
 
-    if (progressMatch) {
-      io.to(socketId).emit('download:progress', {
-        downloadId,
-        percent: parseFloat(progressMatch[1]),
-        speed: speedMatch?.[1] || 'N/A',
-        eta: etaMatch?.[1] || 'N/A',
-        size: sizeMatch?.[1] || 'N/A'
-      });
+    if (progressData) {
+      io.to(socketId).emit('download:progress', progressData);
     }
 
     // Parse destination

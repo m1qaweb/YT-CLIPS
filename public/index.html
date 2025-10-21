@@ -25,6 +25,17 @@
             --primary-800: #7F1D1D;
             --primary-900: #450A0A;
 
+            --gradient-primary: linear-gradient(135deg, #DC2626 0%, #991B1B 50%, #7F1D1D 100%);
+            --gradient-secondary: linear-gradient(135deg, #EF4444 0%, #B91C1C 50%, #450A0A 100%);
+            --gradient-accent: linear-gradient(90deg, #FCA5A5 0%, #DC2626 50%, #991B1B 100%);
+            --gradient-glow: radial-gradient(circle, rgba(220, 38, 38, 0.4) 0%, rgba(220, 38, 38, 0) 70%);
+            --gradient-mesh:
+                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(239, 68, 68, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(185, 28, 28, 0.06) 0%, transparent 50%);
+            --gradient-shimmer: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+            --gradient-holographic: conic-gradient(from 45deg, #DC2626, #EF4444, #F87171, #EF4444, #DC2626);
+
             --neutral-50: #FAFAFA;
             --neutral-100: #F5F5F5;
             --neutral-200: #E5E5E5;
@@ -64,6 +75,10 @@
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
             --shadow-glow: 0 0 20px rgba(220, 38, 38, 0.3);
+            --shadow-glow-strong: 0 0 30px rgba(220, 38, 38, 0.5), 0 0 60px rgba(220, 38, 38, 0.2);
+            --shadow-red-sm: 0 2px 8px rgba(220, 38, 38, 0.15);
+            --shadow-red-md: 0 4px 16px rgba(220, 38, 38, 0.2);
+            --shadow-red-lg: 0 8px 32px rgba(220, 38, 38, 0.25);
 
             --radius-sm: 8px;
             --radius-md: 12px;
@@ -112,11 +127,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background:
-                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+            background: var(--gradient-mesh);
             pointer-events: none;
             z-index: 0;
+            animation: meshFloat 30s ease-in-out infinite;
+        }
+
+        @keyframes meshFloat {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
         }
 
         ::-webkit-scrollbar {
@@ -182,7 +201,7 @@
         .logo-icon {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+            background: var(--gradient-primary);
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
@@ -191,14 +210,32 @@
             font-size: 1.5rem;
             box-shadow: var(--shadow-glow);
             animation: pulse-glow 3s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            will-change: box-shadow;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            inset: -50%;
+            background: var(--gradient-shimmer);
+            animation: shimmerRotate 3s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes shimmerRotate {
+            0% { transform: rotate(0deg) translate(-50%, -50%); }
+            100% { transform: rotate(360deg) translate(-50%, -50%); }
         }
 
         @keyframes pulse-glow {
             0%, 100% {
-                box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+                box-shadow: var(--shadow-glow);
             }
             50% {
-                box-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+                box-shadow: var(--shadow-glow-strong);
             }
         }
 
@@ -259,8 +296,10 @@
             border: 1px solid var(--border-subtle);
             position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow-xl);
+            box-shadow: var(--shadow-xl), var(--shadow-red-sm);
             animation: fadeInUp 0.6s ease 0.2s both;
+            contain: layout style paint;
+            transform: translateZ(0);
         }
 
         @keyframes fadeInUp {
@@ -281,8 +320,10 @@
             right: -50%;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(220, 38, 38, 0.1) 0%, transparent 70%);
+            background: var(--gradient-glow);
             animation: rotate 20s linear infinite;
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         @keyframes rotate {
@@ -342,7 +383,7 @@
         .badge:hover {
             background: var(--surface-glass-hover);
             border-color: var(--border-strong);
-            transform: translateY(-2px);
+            transform: translateY(-2px) translateZ(0);
         }
 
         .badge i {
@@ -380,14 +421,16 @@
             font-weight: 500;
             transition: all var(--transition-base);
             backdrop-filter: blur(10px);
+            position: relative;
+            transform: translateZ(0);
         }
 
         .url-input:focus {
             outline: none;
             border-color: var(--primary-500);
             background: var(--bg-elevated);
-            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1), var(--shadow-lg);
-            transform: translateY(-1px);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15), var(--shadow-red-md);
+            transform: translateY(-2px) translateZ(0);
         }
 
         .url-input::placeholder {
@@ -439,19 +482,41 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+            background: var(--gradient-primary);
             color: white;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-md), var(--shadow-red-sm);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-shimmer);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
         }
 
         .btn-primary:hover:not(:disabled) {
-            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glow), var(--shadow-lg);
+            background: var(--gradient-secondary);
+            transform: translateY(-2px) translateZ(0);
+            box-shadow: var(--shadow-glow-strong), var(--shadow-red-lg);
+        }
+
+        .btn-primary:hover:not(:disabled)::after {
+            transform: translateX(100%);
         }
 
         .btn-primary:active:not(:disabled) {
-            transform: translateY(0);
+            transform: translateY(0) translateZ(0);
+        }
+
+        .btn:focus-visible {
+            outline: 3px solid var(--primary-500);
+            outline-offset: 3px;
         }
 
         .btn-primary:disabled {
@@ -488,13 +553,32 @@
 
         .download-progress {
             background: var(--surface-glass);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px) saturate(150%);
             border: 1px solid var(--border-default);
             border-radius: var(--radius-lg);
             padding: var(--spacing-6);
-            animation: slideInUp 0.4s ease;
+            animation: slideInUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             position: relative;
             overflow: hidden;
+            contain: layout style paint;
+            transform: translateZ(0);
+        }
+
+        .download-progress::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: progressBorderReveal 0.6s ease 0.2s forwards;
+        }
+
+        @keyframes progressBorderReveal {
+            to { transform: scaleX(1); }
         }
 
         @keyframes slideInUp {
@@ -539,20 +623,63 @@
 
         .progress-bar-container {
             background: var(--bg-primary);
-            height: 8px;
+            height: 12px;
             border-radius: var(--radius-full);
             overflow: hidden;
             margin-bottom: var(--spacing-4);
             position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            contain: layout style paint;
+        }
+
+        .progress-segments {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .progress-segment {
+            flex: 1;
+            border-right: 1px solid var(--border-subtle);
+        }
+
+        .progress-segment:last-child {
+            border-right: none;
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+            background: var(--gradient-accent);
             border-radius: var(--radius-full);
-            transition: width 0.3s ease;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            z-index: 2;
+            box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+            transform: translateZ(0);
+            will-change: width;
+        }
+
+        .progress-bar.phase-initializing {
+            background: linear-gradient(90deg, #FCA5A5 0%, #F87171 100%);
+        }
+
+        .progress-bar.phase-fetching {
+            background: linear-gradient(90deg, #F87171 0%, #EF4444 100%);
+        }
+
+        .progress-bar.phase-downloading {
+            background: var(--gradient-accent);
+        }
+
+        .progress-bar.phase-merging {
+            background: linear-gradient(90deg, #B91C1C 0%, #991B1B 100%);
+        }
+
+        .progress-bar.phase-finalizing {
+            background: linear-gradient(90deg, #991B1B 0%, #7F1D1D 100%);
         }
 
         .progress-bar::after {
@@ -562,13 +689,143 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 1.5s infinite;
+            background: var(--gradient-shimmer);
+            animation: shimmer 2s ease-in-out infinite;
+            transform: translateZ(0);
         }
 
         @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% { transform: translateX(-100%) translateZ(0); }
+            100% { transform: translateX(100%) translateZ(0); }
+        }
+
+        .phase-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            padding: var(--spacing-1) var(--spacing-3);
+            background: var(--surface-glass);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--spacing-3);
+            animation: phaseSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform: translateZ(0);
+        }
+
+        @keyframes phaseSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px) scale(0.8) translateZ(0);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1) translateZ(0);
+            }
+        }
+
+        .phase-indicator.initializing {
+            background: linear-gradient(135deg, rgba(252, 165, 165, 0.2), rgba(248, 113, 113, 0.2));
+            border-color: #FCA5A5;
+            color: #FCA5A5;
+        }
+
+        .phase-indicator.fetching {
+            background: linear-gradient(135deg, rgba(248, 113, 113, 0.2), rgba(239, 68, 68, 0.2));
+            border-color: #F87171;
+            color: #F87171;
+        }
+
+        .phase-indicator.downloading {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(185, 28, 28, 0.2));
+            border-color: var(--primary-500);
+            color: var(--primary-400);
+        }
+
+        .phase-indicator.merging {
+            background: linear-gradient(135deg, rgba(185, 28, 28, 0.2), rgba(153, 27, 27, 0.2));
+            border-color: var(--primary-700);
+            color: var(--primary-600);
+        }
+
+        .phase-indicator.finalizing {
+            background: linear-gradient(135deg, rgba(153, 27, 27, 0.2), rgba(127, 29, 29, 0.2));
+            border-color: var(--primary-800);
+            color: var(--primary-700);
+        }
+
+        .phase-indicator-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulseDot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .fragment-progress {
+            display: flex;
+            gap: var(--spacing-3);
+            margin-top: var(--spacing-3);
+            padding-top: var(--spacing-3);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .fragment-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-1);
+        }
+
+        .fragment-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-1);
+        }
+
+        .fragment-bar-container {
+            height: 4px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .fragment-bar {
+            height: 100%;
+            border-radius: var(--radius-full);
+            transition: width 0.3s ease;
+            transform: translateZ(0);
+        }
+
+        .fragment-bar.video {
+            background: linear-gradient(90deg, #3B82F6, #2563EB);
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+        }
+
+        .fragment-bar.audio {
+            background: linear-gradient(90deg, #10B981, #059669);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .fragment-percent {
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
         }
 
         .progress-stats {
@@ -595,6 +852,8 @@
             font-size: 1rem;
             color: var(--text-primary);
             font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2;
         }
 
         .action-btn {
@@ -616,8 +875,13 @@
             color: var(--text-primary);
             background: var(--surface-glass);
             border-color: var(--border-strong);
-            transform: translateY(-2px);
+            transform: translateY(-2px) translateZ(0);
             box-shadow: var(--shadow-md);
+        }
+
+        .action-btn:focus-visible {
+            outline: 2px solid var(--primary-500);
+            outline-offset: 2px;
         }
 
         .action-btn.close:hover {
@@ -665,7 +929,7 @@
 
         .download-card {
             background: var(--surface-glass);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px) saturate(150%);
             border: 1px solid var(--border-default);
             border-radius: var(--radius-lg);
             padding: var(--spacing-5);
@@ -673,6 +937,9 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            contain: layout style paint;
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
         }
 
         .download-card::before {
@@ -682,26 +949,26 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--primary-500), var(--accent-blue));
-            transform: scaleX(0);
+            background: var(--gradient-accent);
+            transform: scaleX(0) translateZ(0);
             transform-origin: left;
             transition: transform var(--transition-base);
         }
 
         .download-card:hover {
             border-color: var(--border-strong);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px) translateZ(0);
+            box-shadow: var(--shadow-lg), var(--shadow-red-sm);
         }
 
         .download-card:hover::before {
-            transform: scaleX(1);
+            transform: scaleX(1) translateZ(0);
         }
 
         .file-icon-wrapper {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+            background: var(--gradient-primary);
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
@@ -709,7 +976,30 @@
             color: white;
             font-size: 1.5rem;
             margin-bottom: var(--spacing-4);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-md), var(--shadow-red-sm);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .download-card:hover .file-icon-wrapper {
+            transform: scale(1.05) translateZ(0);
+            box-shadow: var(--shadow-lg), var(--shadow-red-md);
+        }
+
+        .file-icon-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-shimmer);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .download-card:hover .file-icon-wrapper::before {
+            opacity: 0.3;
+            animation: shimmer 1.5s ease-in-out;
         }
 
         .file-details {
@@ -749,14 +1039,31 @@
         .action-btn.download {
             flex: 1;
             width: auto;
-            background: var(--primary-500);
+            background: var(--gradient-primary);
             color: white;
             border: none;
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .action-btn.download::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-shimmer);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
         }
 
         .action-btn.download:hover {
-            background: var(--primary-600);
+            background: var(--gradient-secondary);
             color: white;
+            box-shadow: var(--shadow-red-md);
+        }
+
+        .action-btn.download:hover::before {
+            transform: translateX(100%);
         }
 
         .action-btn.delete:hover {
@@ -823,6 +1130,7 @@
             animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             position: relative;
             overflow: hidden;
+            transform: translateZ(0);
         }
 
         @keyframes slideInRight {
@@ -1026,6 +1334,23 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
+        }
+
+        @media (prefers-contrast: high) {
+            :root {
+                --border-default: rgba(255, 255, 255, 0.3);
+                --border-strong: rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        * {
+            -webkit-tap-highlight-color: rgba(220, 38, 38, 0.1);
+        }
+
+        .download-progress,
+        .download-card,
+        .hero-section {
+            content-visibility: auto;
         }
 
         .skeleton {
@@ -1260,6 +1585,10 @@
             card.innerHTML = `
                 <div class="progress-header">
                     <div class="progress-title-wrapper">
+                        <div class="phase-indicator initializing">
+                            <span class="phase-indicator-dot"></span>
+                            <span class="phase-text">Initializing</span>
+                        </div>
                         <div class="progress-title">
                             <i class="fas fa-${typeIcons[type] || 'video'}"></i>
                             <span>Downloading ${type}...</span>
@@ -1271,7 +1600,14 @@
                     </button>
                 </div>
                 <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: 0%"></div>
+                    <div class="progress-segments">
+                        <div class="progress-segment"></div>
+                        <div class="progress-segment"></div>
+                        <div class="progress-segment"></div>
+                        <div class="progress-segment"></div>
+                        <div class="progress-segment"></div>
+                    </div>
+                    <div class="progress-bar phase-initializing" style="width: 0%"></div>
                 </div>
                 <div class="progress-stats">
                     <div class="progress-stat">
@@ -1291,10 +1627,32 @@
                         <span class="progress-stat-value progress-size">--</span>
                     </div>
                 </div>
+                <div class="fragment-progress" style="display: none;">
+                    <div class="fragment-item">
+                        <div class="fragment-label">
+                            <i class="fas fa-film"></i>
+                            <span>Video</span>
+                            <span class="fragment-percent video-percent">0%</span>
+                        </div>
+                        <div class="fragment-bar-container">
+                            <div class="fragment-bar video" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="fragment-item">
+                        <div class="fragment-label">
+                            <i class="fas fa-volume-up"></i>
+                            <span>Audio</span>
+                            <span class="fragment-percent audio-percent">0%</span>
+                        </div>
+                        <div class="fragment-bar-container">
+                            <div class="fragment-bar audio" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
             `;
 
             progressContainer.appendChild(card);
-            activeDownloads.set(downloadId, { url, type });
+            activeDownloads.set(downloadId, { url, type, currentPhase: 'initializing' });
         }
 
         function updateProgress(data) {
@@ -1306,12 +1664,64 @@
             const speedSpan = card.querySelector('.progress-speed');
             const etaSpan = card.querySelector('.progress-eta');
             const sizeSpan = card.querySelector('.progress-size');
+            const phaseIndicator = card.querySelector('.phase-indicator');
+            const phaseText = card.querySelector('.phase-text');
+            const fragmentProgress = card.querySelector('.fragment-progress');
 
+            // Update progress bar with smooth animation
             progressBar.style.width = `${data.percent}%`;
             percentSpan.textContent = `${Math.round(data.percent)}%`;
             speedSpan.textContent = data.speed || '--';
             etaSpan.textContent = data.eta || '--';
             sizeSpan.textContent = data.size || '--';
+
+            // Update phase if changed
+            if (data.phase && data.phaseChanged) {
+                const download = activeDownloads.get(data.downloadId);
+                if (download && download.currentPhase !== data.phase) {
+                    download.currentPhase = data.phase;
+
+                    // Update phase indicator
+                    phaseIndicator.className = `phase-indicator ${data.phase}`;
+                    progressBar.className = `progress-bar phase-${data.phase}`;
+
+                    const phaseNames = {
+                        initializing: 'Initializing',
+                        fetching: 'Fetching',
+                        downloading: 'Downloading',
+                        merging: 'Merging',
+                        finalizing: 'Finalizing'
+                    };
+
+                    phaseText.textContent = phaseNames[data.phase] || 'Processing';
+
+                    // Trigger phase change animation
+                    phaseIndicator.style.animation = 'none';
+                    setTimeout(() => {
+                        phaseIndicator.style.animation = '';
+                    }, 10);
+                }
+            }
+
+            // Update fragment progress if available
+            if (data.videoProgress > 0 || data.audioProgress > 0) {
+                fragmentProgress.style.display = 'flex';
+
+                const videoBar = card.querySelector('.fragment-bar.video');
+                const audioBar = card.querySelector('.fragment-bar.audio');
+                const videoPercent = card.querySelector('.video-percent');
+                const audioPercent = card.querySelector('.audio-percent');
+
+                if (videoBar && data.videoProgress > 0) {
+                    videoBar.style.width = `${data.videoProgress}%`;
+                    videoPercent.textContent = `${Math.round(data.videoProgress)}%`;
+                }
+
+                if (audioBar && data.audioProgress > 0) {
+                    audioBar.style.width = `${data.audioProgress}%`;
+                    audioPercent.textContent = `${Math.round(data.audioProgress)}%`;
+                }
+            }
         }
 
         function updateDownloadInfo(data) {
